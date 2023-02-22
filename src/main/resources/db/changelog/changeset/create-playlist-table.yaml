@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-playlist
+      author: admin
+      changes:
+        - createTable:
+            tableName: playlist
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: artist
+                  type: varchar
+                  constraints:
+                    nullable: true
+              - column:
+                  name: title
+                  type: varchar
+                  constraints:
+                    nullable: true
+              - column:
+                  name: duration
+                  type: varchar
+                  constraints:
+                    nullable: true

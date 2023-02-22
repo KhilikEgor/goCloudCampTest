@@ -1,0 +1,13 @@
+services:
+  psql:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=playlist
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+volumes:
+  db-data:
