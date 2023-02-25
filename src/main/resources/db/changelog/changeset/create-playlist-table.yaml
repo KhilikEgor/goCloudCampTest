@@ -25,6 +25,6 @@ databaseChangeLog:
                     nullable: true
               - column:
                   name: duration
-                  type: varchar
+                  type: integer
                   constraints:
                     nullable: true

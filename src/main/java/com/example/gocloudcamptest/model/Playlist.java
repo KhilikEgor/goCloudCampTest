@@ -7,6 +7,10 @@ public class Playlist {
     private Node current;
     private boolean isPlaying;
 
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
     private class Node {
         private Song song;
         private Node prev;
@@ -19,48 +23,93 @@ public class Playlist {
         }
     }
 
-
-    public Playlist(Node head, Node tail, Node current) {
-        this.head = head;
-        this.tail = tail;
-        this.current = current;
-        this.isPlaying = false;
+    public Playlist() {
     }
 
-    public void play(Song song) {
-        if (current != null) {
-            isPlaying = true;
+    public void play(Playlist playlist) {
+        if (playlist.current == null && playlist.head != null) {
+            playlist.current = playlist.head;
         }
+        playlist.isPlaying = true;
     }
 
-    public void pause(Song song) {
+    public void pause() {
         if (current != null) {
             isPlaying = false;
         }
     }
 
     public void addSong(Song song) {
-        Node newNode = new Node(song);
+        Node newSong = new Node(song);
         if (this.head == null) {
-            this.head = newNode;
+            this.head = newSong;
+            this.current = newSong;
         } else {
-            this.tail = newNode;
+            newSong.prev = this.tail;
+            this.tail.next = newSong;
         }
+        this.tail = newSong;
     }
 
-    public void next(Song song) {
+
+    public Song getCurrentSong() {
+        return current != null ? current.song : null;
+    }
+
+    public Song nextSong() {
         if (current != null && current.next != null) {
             current = current.next;
-            isPlaying = true;
         }
+        return current != null ? current.song : null;
     }
 
-    public void prev(Song song) {
+    public Song prevSong() {
         if (current != null && current.prev != null) {
             current = current.prev;
-            isPlaying = true;
         }
+        return current != null ? current.song : null;
+    }
+
+    public Song getNextSong() {
+        if (current != null && current.next != null) {
+            return current.next.song;
+        }
+        return null;
+    }
+
+    public Song getPrevSong() {
+        if (current != null && current.prev != null) {
+            return current.prev.song;
+        }
+        return null;
     }
 
 
+    public void deleteSong(Song song) {
+        Node node = head;
+        while (node != null) {
+            if (node.song.equals(song)) {
+                if (node.prev == null) {
+                    head = node.next;
+                    if (head != null) {
+                        head.prev = null;
+                    } else {
+                        tail = null;
+                    }
+                } else if (node.next == null) {
+                    tail = node.prev;
+                    tail.next = null;
+                } else {
+                    node.prev.next = node.next;
+                    node.next.prev = node.prev;
+                }
+                if (current == node) {
+                    current = null;
+                    isPlaying = false;
+                }
+                break;
+            }
+            node = node.next;
+        }
+    }
 }
