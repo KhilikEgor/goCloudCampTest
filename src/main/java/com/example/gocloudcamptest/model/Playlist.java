@@ -2,21 +2,21 @@ package com.example.gocloudcamptest.model;
 
 public class Playlist {
 
-    private Node head;
-    private Node tail;
-    private Node current;
+    private songNode head;
+    private songNode tail;
+    private songNode current;
     private boolean isPlaying;
 
     public boolean isPlaying() {
         return isPlaying;
     }
 
-    private class Node {
-        private Song song;
-        private Node prev;
-        private Node next;
+    private static class songNode {
+        private final Song song;
+        private songNode prev;
+        private songNode next;
 
-        private Node(Song song) {
+        private songNode(Song song) {
             this.song = song;
             this.prev = null;
             this.next = null;
@@ -26,11 +26,11 @@ public class Playlist {
     public Playlist() {
     }
 
-    public void play(Playlist playlist) {
-        if (playlist.current == null && playlist.head != null) {
-            playlist.current = playlist.head;
+    public void play() {
+        if (this.current == null && this.head != null) {
+            this.current = this.head;
         }
-        playlist.isPlaying = true;
+        this.isPlaying = true;
     }
 
     public void pause() {
@@ -40,7 +40,7 @@ public class Playlist {
     }
 
     public void addSong(Song song) {
-        Node newSong = new Node(song);
+        songNode newSong = new songNode(song);
         if (this.head == null) {
             this.head = newSong;
             this.current = newSong;
@@ -86,7 +86,7 @@ public class Playlist {
 
 
     public void deleteSong(Song song) {
-        Node node = head;
+        songNode node = head;
         while (node != null) {
             if (node.song.equals(song)) {
                 if (node.prev == null) {

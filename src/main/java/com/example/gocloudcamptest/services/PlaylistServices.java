@@ -6,8 +6,6 @@ import com.example.gocloudcamptest.repository.PlaylistRepo;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 
 @Service
 public class PlaylistServices {
@@ -48,8 +46,20 @@ public class PlaylistServices {
     }
 
     public void play(Playlist playlist) {
-        playlist.play(playlist);
+        Song currentSong = playlist.getCurrentSong();
+        Thread thread = new Thread(() -> {
+            playlist.play();
+            System.out.println("Playing " + currentSong.getTitle() + " by " + currentSong.getArtist());
+            try {
+                Thread.sleep(currentSong.getDuration() * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(currentSong.getTitle() + " by " + currentSong.getArtist() + " has finished playing.");
+        });
+        thread.start();
     }
+
 
     public void pause(Playlist playlist) {
         playlist.pause();

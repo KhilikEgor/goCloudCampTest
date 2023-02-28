@@ -48,14 +48,14 @@ public class PlaylistServicesTests {
     public void shouldntDeletePlayingSong() {
         // given
         Playlist playlist = new Playlist();
-        Song song = new Song("Title", "Artist", 120);
+        Song song = new Song("Title", "Artist", 100);
         // when
         playlistServices.addSong(song, playlist);
         playlistServices.play(playlist);
         Song playingSong = playlistServices.currentSong(playlist);
         playlistServices.deleteSong(song, playlist);
         // then
-        assertEquals(playingSong, playlist.getCurrentSong());
+        assertEquals(playingSong, playlistServices.currentSong(playlist));
         playlistServices.pause(playlist);
         playlistServices.deleteSong(song, playlist);
         assertNull(playlist.getCurrentSong());
