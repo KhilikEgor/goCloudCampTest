@@ -119,19 +119,3 @@ public class PlaylistServices {
     }
 
 }
-
-//todo №1
-// поток для проигывания музыки поток будет длиться durationSong. Песня заканчивается поток закрывется,
-// начиается след песня под которую создается отдельный поток
-
-//todo №2
-// сделать отдельную таблицу song и playlist. Связать данные таблицы
-
-//todo №3
-// update допилить playlistService, songRepo
-
-//todo №4
-// написать playlistController
-
-//todo №5
-// gRPC
