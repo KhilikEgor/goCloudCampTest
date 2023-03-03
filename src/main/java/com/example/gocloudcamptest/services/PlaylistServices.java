@@ -32,32 +32,67 @@ public class PlaylistServices {
 
 
     public void nextSong(Playlist playlist) {
-        if (playlist == null || playlist.nextSong() == null) {
-            return;
+        if (playlist.isPlaying()) {
+            playlist.pause();
+            playlist.nextSong();
+            playlist.play();
         }
-        playlist.nextSong();
+        else {
+            playlist.nextSong();
+        }
     }
 
     public void prevSong(Playlist playlist) {
-        if (playlist == null || playlist.prevSong() == null) {
-            return;
+         if (playlist.isPlaying()) {
+            playlist.pause();
+            playlist.prevSong();
+            playlist.play();
+        } else {
+            playlist.prevSong();
         }
-        playlist.prevSong();
     }
 
     public void play(Playlist playlist) {
         Song currentSong = playlist.getCurrentSong();
-        Thread thread = new Thread(() -> {
-            playlist.play();
-            System.out.println("Playing " + currentSong.getTitle() + " by " + currentSong.getArtist());
-            try {
-                Thread.sleep(currentSong.getDuration() * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println(currentSong.getTitle() + " by " + currentSong.getArtist() + " has finished playing.");
-        });
-        thread.start();
+        if (currentSong != null) {
+            Thread thread = new Thread(() -> {
+                int currentDuration = 0;
+                playlist.play();
+                System.out.println("Playing " + currentSong.getTitle() + " by " + currentSong.getArtist());
+                int songDuration = currentSong.getDuration();
+                boolean isPaused = false; // flag to check if the song is paused
+                while (songDuration > 0 && currentDuration != songDuration) {
+                    if (!isPaused) {
+                        int minutes = currentDuration / 60;
+                        int seconds = currentDuration % 60;
+                        currentDuration += 1;
+                        String time = String.format("%02d:%02d", minutes, seconds);
+                        System.out.println("Time elapsed: " + time);
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (currentSong != playlist.getCurrentSong()) {
+                        playlist.pause();
+                        System.out.println("Stopped playing " + currentSong.getTitle() + " by " + currentSong.getArtist());
+                        System.out.println();
+                        play(playlist);
+                        return;
+                    }
+                    if (!playlist.isPlaying()) { // check if the playlist is paused
+                        isPaused = true; // set flag to true
+                        System.out.println("Paused " + currentSong.getTitle() + " by " + currentSong.getArtist());
+                    } else {
+                        isPaused = false; // set flag to false
+                    }
+                }
+                playlist.pause();
+                System.out.println("Stopped playing " + currentSong.getTitle() + " by " + currentSong.getArtist());
+            });
+            thread.start();
+        }
     }
 
 

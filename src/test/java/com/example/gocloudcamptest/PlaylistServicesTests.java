@@ -14,10 +14,31 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
 public class PlaylistServicesTests {
+
+    public void sleep(int time) {
+        try {
+            Thread.sleep(time * 1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Inject
     private PlaylistRepo playlistRepo;
     @Inject
     private PlaylistServices playlistServices;
+
+    @Test
+    public void shouldDeleteSongFromPlaylist() {
+        // given
+        Playlist playlist = new Playlist();
+        Song song = new Song("Title", "Artist", 120);
+        // when
+        playlistServices.addSong(song, playlist);
+        // then
+        playlistServices.deleteSong(song, playlist);
+        assertEquals(0, playlistRepo.count());
+    }
 
     @Test
     public void shouldAddSongInPlaylist() {
@@ -32,19 +53,6 @@ public class PlaylistServicesTests {
     }
 
     @Test
-    public void shouldDeleteSongFromPlaylist() {
-        // given
-        Playlist playlist = new Playlist();
-        Song song = new Song("Title", "Artist", 120);
-        // when
-        playlistServices.addSong(song, playlist);
-        // then
-        assertEquals(1, playlistRepo.count());
-        playlistServices.deleteSong(song, playlist);
-        assertEquals(0, playlistRepo.count());
-    }
-
-    @Test
     public void shouldntDeletePlayingSong() {
         // given
         Playlist playlist = new Playlist();
@@ -52,6 +60,7 @@ public class PlaylistServicesTests {
         // when
         playlistServices.addSong(song, playlist);
         playlistServices.play(playlist);
+        sleep(1);
         Song playingSong = playlistServices.currentSong(playlist);
         playlistServices.deleteSong(song, playlist);
         // then
@@ -71,6 +80,7 @@ public class PlaylistServicesTests {
         playlistServices.addSong(song1, playlist);
         playlistServices.addSong(song2, playlist);
         playlistServices.play(playlist);
+        sleep(1);
         playlistServices.deleteSong(playlist.getNextSong(), playlist);
         playlistServices.nextSong(playlist);
         // then
@@ -90,7 +100,9 @@ public class PlaylistServicesTests {
         playlistServices.addSong(song1, playlist);
         playlistServices.addSong(song2, playlist);
         playlistServices.play(playlist);
+        sleep(3);
         playlistServices.nextSong(playlist);
+        sleep(3);
         // then
         assertEquals("Title song 2", playlist.getCurrentSong().getTitle());
         playlistServices.pause(playlist);
@@ -108,8 +120,38 @@ public class PlaylistServicesTests {
         playlistServices.addSong(song1, playlist);
         playlistServices.addSong(song2, playlist);
         playlistServices.play(playlist);
+        sleep(3);
         Song currentSong = playlistServices.currentSong(playlist);
         assertEquals("Title song 1", currentSong.getTitle());
+
+        playlistServices.nextSong(playlist);
+        currentSong = playlistServices.currentSong(playlist);
+        assertEquals("Title song 2", currentSong.getTitle());
+        sleep(3);
+        playlistServices.prevSong(playlist);
+        currentSong = playlistServices.currentSong(playlist);
+        assertEquals("Title song 1", currentSong.getTitle());
+        sleep(3);
+        playlistServices.pause(playlist);
+        playlistServices.deleteSong(song1, playlist);
+        playlistServices.deleteSong(song2, playlist);
+    }
+
+    @Test
+    public void shouldPlayFromLastStop() {
+        // given
+        Playlist playlist = new Playlist();
+        Song song1 = new Song("Title song 1", "Artist 1", 120);
+        // when
+        playlistServices.addSong(song1, playlist);
+        playlistServices.play(playlist);
+        sleep(5);
+        Song currentSong = playlistServices.currentSong(playlist);
+        assertEquals("Title song 1", currentSong.getTitle());
+        playlistServices.pause(playlist);
+        sleep(5);
+        playlistServices.play(playlist);
+        sleep(5);
 
         playlistServices.nextSong(playlist);
         currentSong = playlistServices.currentSong(playlist);
@@ -121,7 +163,6 @@ public class PlaylistServicesTests {
 
         playlistServices.pause(playlist);
         playlistServices.deleteSong(song1, playlist);
-        playlistServices.deleteSong(song2, playlist);
     }
 
 //    @Test
