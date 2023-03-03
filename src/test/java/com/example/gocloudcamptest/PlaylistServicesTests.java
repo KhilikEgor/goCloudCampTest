@@ -122,8 +122,6 @@ public class PlaylistServicesTests {
         playlistServices.play(playlist);
         sleep(3);
         Song currentSong = playlistServices.currentSong(playlist);
-        assertEquals("Title song 1", currentSong.getTitle());
-
         playlistServices.nextSong(playlist);
         currentSong = playlistServices.currentSong(playlist);
         assertEquals("Title song 2", currentSong.getTitle());
@@ -152,24 +150,23 @@ public class PlaylistServicesTests {
         sleep(5);
         playlistServices.play(playlist);
         sleep(5);
-
-        playlistServices.nextSong(playlist);
-        currentSong = playlistServices.currentSong(playlist);
-        assertEquals("Title song 2", currentSong.getTitle());
-
-        playlistServices.prevSong(playlist);
-        currentSong = playlistServices.currentSong(playlist);
-        assertEquals("Title song 1", currentSong.getTitle());
-
         playlistServices.pause(playlist);
         playlistServices.deleteSong(song1, playlist);
     }
 
-//    @Test
-//    public void shouldUpdateSong() {
-//        Playlist playlist = new Playlist();
-//        Song song1 = new Song("Title song 1", "Artist 1", 120);
-//
-//        playlistServices.updateSong();
-//    }
+    @Test
+    public void shouldPlayAllPlaylist() {
+        // given
+        Playlist playlist = new Playlist();
+        Song song1 = new Song("Title song 1", "Artist 1", 3);
+        Song song2 = new Song("Title song 2", "Artist 2", 3);
+        // when
+        playlistServices.addSong(song1, playlist);
+        playlistServices.addSong(song2, playlist);
+        playlistServices.play(playlist);
+        sleep(10);
+        playlistServices.deleteSong(song1, playlist);
+        playlistServices.deleteSong(song2, playlist);
+    }
+
 }

@@ -15,7 +15,7 @@ public class PlaylistServices {
 
     public void addSong(Song song, Playlist playlist) {
         playlist.addSong(song);
-        playlistRepo.save(song); // playlist and playlistRepo
+        playlistRepo.save(song);
     }
 
     public void deleteSong(Song song, Playlist playlist) {
@@ -28,22 +28,18 @@ public class PlaylistServices {
         }
     }
 
-//    public void updateSong(Song song) {};
-
-
     public void nextSong(Playlist playlist) {
         if (playlist.isPlaying()) {
             playlist.pause();
             playlist.nextSong();
             playlist.play();
-        }
-        else {
+        } else {
             playlist.nextSong();
         }
     }
 
     public void prevSong(Playlist playlist) {
-         if (playlist.isPlaying()) {
+        if (playlist.isPlaying()) {
             playlist.pause();
             playlist.prevSong();
             playlist.play();
@@ -86,6 +82,24 @@ public class PlaylistServices {
                         System.out.println("Paused " + currentSong.getTitle() + " by " + currentSong.getArtist());
                     } else {
                         isPaused = false; // set flag to false
+                    }
+                    if (currentDuration == songDuration) { // check if the song is over
+                        if (currentSong == playlist.getCurrentSong()) {
+                            playlist.pause();
+                            isPaused = true;
+                        } else {
+                            playlist.pause(); // pause the playlist
+                            System.out.println("Stopped playing " + currentSong.getTitle() + " by " + currentSong.getArtist());
+                            System.out.println();
+                            playlist.nextSong(); // go to the next song in the playlist
+                            play(playlist); // start playing the next song recursively
+                            return;
+                        }
+                    }
+                    if (playlist.nextSong() == playlist.getCurrentSong() && currentDuration == songDuration) {
+                        System.out.println();
+                        System.out.println("The songs in the playlist are over!");
+                        pause(playlist);
                     }
                 }
                 playlist.pause();
